@@ -4,7 +4,9 @@ let resetBtn = document.querySelector("#reset-btn");
 let winnerHeading = document.querySelector("#new-heading")
 let msgContainer = document.querySelector(".msg-container")
 
-let turnO = true; // playerO is true
+let turnO = true; // player O is true
+count = 0; // to track if game was draw
+
 const winnerPattern = [
     [0,1,2],
     [0,3,6],
@@ -28,8 +30,13 @@ boxes.forEach((box) => {
             turnO = true;
         }
         box.disabled = true;
-        checkWinner();
-        drawGame();
+        count++;
+        let isWinner = checkWinner();
+
+        if(count === 9 && !isWinner){
+            checkDraw();
+        }
+        
     })
 })
 
@@ -43,6 +50,7 @@ const checkWinner = () => {
             if(position1 === position2 && position2 === position3){
                 disableButtons();
                 winResult(position1);
+                return true;
             }
         }
     }
@@ -53,20 +61,10 @@ function winResult(win){
     winnerHeading.innerText = `Congratulations, ${win} is Winner`;
 }
 
-function drawGame() {
-    console.log("DrawGame fn awaken")
-    let count = 0;
-    for(let box in boxes){
-        if(box.disabled == true){
-            count = count + 1;
-        }    
-    }    
-    console.log(count)
-
-    if(count == 9) {
-        msgContainer.classList.remove("hide-container");
-        winnerHeading.innerText = "Match Draw";
-    }
+function checkDraw() {
+    winnerHeading.innerText = "Game was Draw";
+    msgContainer.classList.remove("hide-container");
+    disableButtons();
 }
 
 const disableButtons = () => {
@@ -85,6 +83,7 @@ const reset = () => {
     turnO = true;
     enableButtons();
     msgContainer.classList.add("hide-container")
+    count = 0;
 }
 
 resetBtn.addEventListener("click", reset)
